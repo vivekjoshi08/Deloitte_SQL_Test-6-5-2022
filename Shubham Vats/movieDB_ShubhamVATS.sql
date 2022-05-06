@@ -76,7 +76,7 @@ WHERE m.mov_id=c.mov_id AND act_id IN (SELECT act_id
 FROM movie_cast GROUP BY act_id
 HAVING COUNT(act_id)>1)
 GROUP BY mov_title
-HAVING COUNT(*)>1;
+HAVING COUNT(mov_title)>1;
 
 #query3
 SELECT act_name
@@ -85,7 +85,7 @@ JOIN movie_cast c
 ON a.act_id=c.act_id
 JOIN movie m
 ON c.mov_id=m.mov_id
-WHERE m.mov_year NOT BETWEEN 2000 AND 2015;
+WHERE m.mov_year < 2000 AND m.mov_year > 2015;
 
 #query4
 SELECT mov_title,MAX(rev_stars)
