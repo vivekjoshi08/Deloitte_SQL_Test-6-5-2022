@@ -1,0 +1,110 @@
+use emp_dbtest;
+
+CREATE TABLE employee(ssn VARCHAR(25) , fname VARCHAR(25), 
+lname VARCHAR(25), address VARCHAR(50), sex VARCHAR(1), 
+salary INT NOT NULL , superssn VARCHAR(25), dno INT);
+
+DROP TABLE employee;
+
+CREATE TABLE employee(ssn VARCHAR(25) , fname VARCHAR(25), 
+lname VARCHAR(25), address VARCHAR(50), sex VARCHAR(1), 
+salary INT NOT NULL , superssn VARCHAR(25), dno INT);
+
+INSERT INTO employee VALUES('RNSECE01', 'JOHN', 'SCOTT', 'BANGALORE', 'M', 450000, NULL , 3);
+INSERT INTO employee VALUES('RNSCSE01', 'JAMES', 'SMITH', 'BANGALORE', 'M', 500000 , 'RNSCSE02', 5);
+INSERT INTO employee VALUES('RNSCSE02', 'HEARN', 'BAKER', 'BANGALORE', 'M', 700000 ,'RNSCSE03' , 5);
+INSERT INTO employee VALUES('RNSCSE03', 'EDWARD', 'SCOTT', 'MYSORE', 'M', 500000 , 'RNSSCE04' , 5 );
+INSERT INTO employee VALUES('RNSCSE04', 'PAVAN', 'HEGDE', 'BANGALORE', 'M', 650000, 'RNSCSE05' , 5 );
+INSERT INTO employee VALUES('RNSCSE05', 'GIRISH', 'MALYA', 'MYSORE', 'M', 450000 , 'RNSCSE06' , 5);
+INSERT INTO employee VALUES('RNSCSE06', 'NEHA', 'SN', 'BANGALORE', 'F', 800000, NULL , 5 );
+INSERT INTO employee VALUES('RNSACC01', 'AHANA', 'K', 'MANGALORE', 'F', 350000, 'RNSACC02', 1);
+INSERT INTO employee VALUES('RNSACC02', 'SANTOSH', 'KUMAR', 'MANGALORE', 'M', 300000, NULL, 1);
+INSERT INTO employee VALUES('RNSISE01', 'VEENA', 'M', 'MYSORE', 'M', 600000, NULL, 4);
+INSERT INTO employee VALUES('RNSIT01', 'NAGESH', 'HR', 'BANGALORE', 'M', 500000, NULL, 2);
+
+SELECT * FROM employee;
+CREATE TABLE department(dno INT, dname VARCHAR(25), mgrssn VARCHAR(25), mgrstartdate DATE);
+
+
+INSERT INTO department VALUES(1,'ACCOUNTS', 'RNSACC02', STR_TO_DATE( '01-JAN-01', '%d-%b-%y'));
+INSERT INTO department VALUES(2,'IT', 'RNSIT01', STR_TO_DATE( '01-AUG-16', '%d-%b-%y'));
+INSERT INTO department VALUES(3,'ECE', 'RNSECE01', STR_TO_DATE( '01-JUN-08', '%d-%b-%y'));
+INSERT INTO department VALUES(4,'ISE', 'RNSISE01', STR_TO_DATE( '01-AUG-15', '%d-%b-%y'));
+INSERT INTO department VALUES(5,'CSE', 'RNSCSE01', STR_TO_DATE( '01-JUN-02', '%d-%b-%y'));
+
+CREATE TABLE dlocation(dno INT, dloc VARCHAR(25));
+
+INSERT INTO dlocation VALUES(1, 'BANGALORE');
+INSERT INTO dlocation VALUES(2, 'BANGALORE');
+INSERT INTO dlocation VALUES(3, 'BANGALORE');
+INSERT INTO dlocation VALUES(4, 'MANGALORE');
+INSERT INTO dlocation VALUES(5, 'MANGALORE');
+
+
+CREATE TABLE project(pno INT NOT NULL, pname VARCHAR(50), plocation VARCHAR(25), dno INT);
+
+DROP TABLE project;
+
+CREATE TABLE project(pno INT PRIMARY KEY NOT NULL, pname VARCHAR(50), plocation VARCHAR(25), dno INT);
+
+INSERT INTO project VALUES(100 , 'IOT', 'BANGALORE', 5);
+INSERT INTO project VALUES(101 , 'CLOUD', 'BANGALORE', 5);
+INSERT INTO project VALUES(102 , 'BIGDATA', 'BANGALORE', 5);
+INSERT INTO project VALUES(103 , 'SENSORS', 'BANGALORE', 3);
+INSERT INTO project VALUES(104 , 'BANK MANAGEMENT', 'BANGALORE', 1);
+INSERT INTO project VALUES(105 , 'SALARY MANAGEMENT', 'BANGALORE', 1);
+INSERT INTO project VALUES(106 , 'OPENSTACK', 'BANGALORE', 4);
+INSERT INTO project VALUES(107 , 'SMART CITY', 'BANGALORE', 2);
+
+CREATE TABLE works_on(ssn VARCHAR(25), pno INT REFERENCES project(pno), hours INT);
+
+INSERT INTO works_on VALUES('RNSCSE01', 100, 4);
+INSERT INTO works_on VALUES('RNSCSE01', 101, 6);
+INSERT INTO works_on VALUES('RNSCSE01', 102, 8);
+INSERT INTO works_on VALUES('RNSCSE02', 100, 10);
+INSERT INTO works_on VALUES('RNSCSE04', 100, 3);
+INSERT INTO works_on VALUES('RNSCSE05', 101, 4);
+INSERT INTO works_on VALUES('RNSCSE06', 102, 5);
+INSERT INTO works_on VALUES('RNSCSE03', 102, 6);
+INSERT INTO works_on VALUES('RNSECE01', 103, 7);
+INSERT INTO works_on VALUES('RNSACC01', 104, 5);
+INSERT INTO works_on VALUES('RNSACC02', 105, 6);
+INSERT INTO works_on VALUES('RNSISE01', 106, 4);
+INSERT INTO works_on VALUES('RNSIT01', 107, 10);
+
+SELECT * FROM department;
+#QUERIES
+
+#1
+SELECT pno FROM project
+INNER JOIN employee
+ON employee.dno=project.dno
+WHERE employee.lname='SCOTT';
+
+#2
+SELECT 1.1*salary AS res_salary FROM employee
+INNER JOIN project ON project.dno=employee.dno
+WHERE pname='IOT';
+
+
+#3
+SELECT SUM(salary),MAX(salary), MIN(SALARY), AVG(salary) FROM employee
+INNER JOIN department
+ON department.dno=employee.dno
+WHERE department.dname='ACCOUNTS';
+
+#4
+SELECT fname FROM employee e
+INNER JOIN works_on w 
+ON e.ssn=w.ssn
+NOT IN(SELECT fname FROM employee
+WHERE NOT EXISTS(SELECT pno FROM project 
+WHERE dno=5));
+
+#5
+SELECT d.dno, COUNT(*) FROM department d
+INNER JOIN employee e 
+ON d.dno=e.dno
+WHERE salary>600000 
+AND d.dno IN(SELECT dno FROM employee
+GROUP BY dno HAVING COUNT(*)>5);
