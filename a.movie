@@ -1,0 +1,61 @@
+use movie99;
+
+create table actor(
+act_id int primary key,
+act_name varchar(50),
+act_gender varchar(1)
+);
+
+create table director(
+dir_id int primary key,
+dir_name varchar(50),
+dir_phone varchar(50)
+);
+
+create table movies(
+mov_id int primary key,
+mov_title varchar(50),
+mov_year int,
+mov_lang varchar(50),
+dir_id int,
+foreign key (dir_id) references director(dir_id)
+);
+
+create table movie_cast(
+act_id int references actor(act_id),
+mov_id int ,
+role_ varchar(50),
+foreign key (mov_id) references movies(mov_id)
+);
+
+create table rating(
+mov_id int,
+rev_star int,
+foreign key (mov_id) references movies(mov_id)
+);
+
+
+
+#inserting values to the table
+
+insert into actor( act_id, act_name, act_gender )
+values 
+(301, 'ANUSHKA', 'F'),
+(302, 'PRABHAS', 'M'),
+(303, 'PUNITH', 'M'),
+(304, 'JERMY', 'M');
+
+#SELECT * FROM ACTOR;
+
+insert into director(dir_id, dir_name, dir_phone)
+values
+(60, 'RAJAMOULI', '8751611001'),
+(61, 'HITCHCOCK', '7766138911'),
+(62, 'FARAN', '9986776531'),
+(63, 'STEVEN SPIELBERG', '8989776530');
+
+#SELECT * FROM DIRECTOR;
+
+insert into movies(mov_id, mov_title, mov_year, mov_lang, dir_id )
+values
+(1001, 
