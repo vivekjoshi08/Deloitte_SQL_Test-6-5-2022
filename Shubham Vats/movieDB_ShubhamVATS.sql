@@ -74,9 +74,9 @@ SELECT mov_title
 FROM movie m,movie_cast c
 WHERE m.mov_id=c.mov_id AND act_id IN (SELECT act_id
 FROM movie_cast GROUP BY act_id
-HAVING COUNT(act_id)>1)
+HAVING COUNT(act_id)>=1)
 GROUP BY mov_title
-HAVING COUNT(mov_title)>1;
+HAVING COUNT(mov_title)>=2;
 
 #query3
 SELECT act_name
@@ -92,7 +92,7 @@ SELECT mov_title,MAX(rev_stars)
 FROM movie
 INNER JOIN rating USING (mov_id)
 GROUP BY mov_title
-HAVING MAX(rev_stars)>0
+HAVING rev_stars>1
 ORDER BY mov_title;
 
 #query5
